@@ -8,7 +8,7 @@ from interfaces.llm.i_ai_client import IAIClient
 
 class ChatConnectionService(IChatConnection):
     """
-    Initializes AI chatbot connection using interface-based dependencies.
+    Initializes FalconAI connection using interface-based dependencies.
     """
 
     def __init__(self, config_provider: IConfigProvider):
