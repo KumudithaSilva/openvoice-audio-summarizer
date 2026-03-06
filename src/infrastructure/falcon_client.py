@@ -25,9 +25,7 @@ class FalconAIClientWrapper(IAIClient):
         self.client = Falcon(self.config_provider)
         self.client.configure_model()
 
-    def chat_completions_create(
-        self, messages: List[Dict], model: str = "Falcon3-1B-Instruct"
-    ) -> str:
+    def chat_completions_create(self, messages: List[Dict]) -> str:
         """
         Sends a chat completion request to the AI backend.
 
