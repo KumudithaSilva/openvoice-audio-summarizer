@@ -40,7 +40,7 @@ class ChatResponse(BaseModel):
     Response model for initial chat history.
     """
 
-    messages: List[Dict]
+    messages: str
 
 
 # --- Routes ---
@@ -59,11 +59,13 @@ def user_request(data: ChatResponse):
             raise RuntimeError("AI client not initialized")
         logger.info("AI client available for request")
 
-        # completion_service = container.create_chat_completion_service(
-        #     ai_client=ai_client
-        # )
-        # response = completion_service.generate(messages=data.messages)
-        response = "test"
+        message_service = container.create_chat_messages()
+        message = message_service.initialize(data.messages)
+
+        completion_service = container.create_chat_completion_service(
+            ai_client=ai_client
+        )
+        response = completion_service.generate(messages=message)
 
         logger.debug(f"Response: {response}")
         if response is None:
