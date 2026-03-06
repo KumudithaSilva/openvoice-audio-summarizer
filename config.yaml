@@ -1,0 +1,5 @@
+models:
+  Falcon3-1B-Instruct:
+    location: "G:/LLMs/ai-meeting-minutes-generator/Falcon3-1B-Instruct"
+  falcon-7b:
+    location: "G:/LLMs/ai-meeting-minutes-generator/Falcon-40b"
