@@ -39,24 +39,3 @@ class FalconAIClientWrapper(IAIClient):
         """
         response = self.client.create(messages=messages)
         return response
-
-
-if __name__ == "__main__":
-    from infrastructure.config_provider import ConfigProvider
-
-    cp = ConfigProvider()
-    falcon = FalconAIClientWrapper(config_provider=cp)
-
-    messages = [
-        {
-            "role": "system",
-            "content": "\nYou produce summary key discussion points,in markdown format without code blocks.\n",
-        },
-        {
-            "role": "user",
-            "content": "\nBelow is an extract transcript of a meeting: \nHello, how are you? We are planning to conduct our Annual next meeting on 24th February 2026 at 4 pm at Main Auditorium.\n",
-        },
-    ]
-
-    result = falcon.chat_completions_create(messages)
-    print(result)
