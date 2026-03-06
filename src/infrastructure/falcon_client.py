@@ -16,7 +16,7 @@ class FalconAIClientWrapper(IAIClient):
 
     def __init__(self, config_provider: IConfigProvider):
         """
-        Initialize OpenAI client wrapper.
+        Initialize Falcon client wrapper.
 
         Args:
             config_provider (IConfigProvider): Interface to obtain model details.
