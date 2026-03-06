@@ -1,12 +1,12 @@
 from typing import Optional
 
 from infrastructure.falcon_client import FalconAIClientWrapper
-from interfaces.chat.i_chatbot_connection import IChatConnection
+from interfaces.chat.i_voice_connection import IVoiceConnection
 from interfaces.infra.i_config_provider import IConfigProvider
 from interfaces.llm.i_ai_client import IAIClient
 
 
-class ChatConnectionService(IChatConnection):
+class ChatConnectionService(IVoiceConnection):
     """
     Initializes FalconAI connection using interface-based dependencies.
     """

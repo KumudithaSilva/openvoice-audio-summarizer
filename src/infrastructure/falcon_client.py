@@ -23,6 +23,7 @@ class FalconAIClientWrapper(IAIClient):
         """
         self.config_provider = config_provider.get_model_details()
         self.client = Falcon(self.config_provider)
+        self.client.configure_model()
 
     def chat_completions_create(
         self, messages: List[Dict], model: str = "Falcon3-1B-Instruct"

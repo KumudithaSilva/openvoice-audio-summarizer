@@ -5,11 +5,11 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from container.chatbot_container import ChatbotContainer
+from container.openvoice_container import OpenVoiceContainer
 from logs.logger_singleton import Logger
 
 logger = Logger(name="fastapi")
-container = ChatbotContainer()
+container = OpenVoiceContainer()
 
 
 # --- FastAPI app with lifespan context manager ---
