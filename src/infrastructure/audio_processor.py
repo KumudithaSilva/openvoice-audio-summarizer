@@ -85,3 +85,11 @@ class AudioProcessor(IAudioProcessor):
             self.logger.error(f"Failed to preprocess audio: {e}")
             raise RuntimeError("Audio preprocessing failed") from e
         
+
+if __name__ == "__main__":
+    processor = AudioProcessor()
+
+    audio = processor.load_audio_file("meeting_audio.wav")
+    audio = processor.preprocess_audio(samplerate=16000)
+
+    print(audio.waveform)
