@@ -1,8 +1,10 @@
 from components.chat_completion import ChatCompletionService
 from components.chat_connection import ChatConnectionService
 from components.chat_messages import MessageCompletionService
+from infrastructure.audio_processor import AudioProcessor
 from infrastructure.falcon_prompt import PromptProvider
 from infrastructure.falconai_service import FalconAIService
+from interfaces.audio.i_audio_processor import IAudioProcessor
 from interfaces.chat.i_chat_history import IMessageCompletionService
 from interfaces.chat.i_oneshot_prompt import IPrompt
 from interfaces.chat.i_voice_complete import IVoiceCompletionService
@@ -48,3 +50,11 @@ class OpenVoiceContainer:
         """
         falcon_service: IFalconAIOperations = FalconAIService(ai_client)
         return ChatCompletionService(falcon_service)
+
+    def create_audio_completion_service(
+        self,
+    ) -> IAudioProcessor:
+        """
+        Create and return a audio extracting service
+        """
+        return AudioProcessor()
