@@ -1,8 +1,7 @@
 from contextlib import asynccontextmanager
-from typing import Dict, List
 
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel
 
 from container.openvoice_container import OpenVoiceContainer
@@ -44,6 +43,38 @@ class ChatResponse(BaseModel):
 
 
 # --- Routes ---
+@app.post("/chat/user_upload")
+async def user_upload(file: UploadFile = File(...)):
+    """
+    Handle audio file upload and return AI response.
+    """
+    logger.info("Received request to /chat/user_upload")
+    try:
+        # bytes of audio file
+        logger.debug(f"File received: {file.filename}, type: {file.content_type}")
+
+        audio_service = container.create_audio_completion_service()
+        audio_service.load_audio_file(file.file)
+
+        audio_response = audio_service.preprocess_audio()
+        audio = audio_response.waveform
+
+        logger.debug(f"Response: {audio}")
+
+        preview = audio[:, :100]
+
+        if audio is None:
+            raise RuntimeError("VoiceAI returned None")
+
+        return {"response": preview.tolist()}
+
+    except Exception as e:
+        logger.exception("Error in /chat/user_upload")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching response: {str(e)}"
+        )
+
+
 @app.post("/chat/send_request")
 def user_request(data: ChatResponse):
     """
