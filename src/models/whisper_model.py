@@ -90,7 +90,7 @@ class Whisper:
 
             # Generate output
             output = self.model.generate(
-                input_features=input_features,
+                input_features=input_features.get("input_features"),
             ).to(self.device)
 
             result = self.tokenizer.decode(output[0], skip_special_tokens=True)
