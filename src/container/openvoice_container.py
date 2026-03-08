@@ -1,4 +1,4 @@
-from components.chat_completion import ChatCompletionService
+from components.chat_generation import ChatGenerationService
 from components.chat_connection import ChatConnectionService
 from components.chat_messages import MessageCompletionService
 from infrastructure.audio_processor import AudioProcessor
@@ -7,8 +7,8 @@ from infrastructure.falconai_service import FalconAIService
 from interfaces.audio.i_audio_processor import IAudioProcessor
 from interfaces.chat.i_chat_history import IMessageCompletionService
 from interfaces.chat.i_oneshot_prompt import IPrompt
-from interfaces.chat.i_voice_complete import IVoiceCompletionService
-from interfaces.chat.i_voice_connection import IVoiceConnection
+from interfaces.chat.i_text_generation import ITextGenereateService
+from interfaces.chat.i_falcon_connection import IFalconConnection
 from interfaces.infra.i_config_provider import IConfigProvider
 from infrastructure.config_provider import ConfigProvider
 from interfaces.llm.i_ai_client import IAIClient
@@ -23,7 +23,7 @@ class OpenVoiceContainer:
     def create_chat_connection_service(
         self,
         config_provider: IConfigProvider = None,
-    ) -> IVoiceConnection:
+    ) -> IFalconConnection:
         """
         Create and return a llm connection service with concrete
         or default dependencies.
@@ -40,16 +40,16 @@ class OpenVoiceContainer:
         prompt_provider: IPrompt = PromptProvider()
         return MessageCompletionService(prompt_provider)
 
-    def create_chat_completion_service(
+    def create_chat_generation_service(
         self,
         ai_client: IAIClient,
-    ) -> IVoiceCompletionService:
+    ) -> ITextGenereateService:
         """
         Create and return a chat completion service using the
         provided AI client.
         """
         falcon_service: IFalconAIOperations = FalconAIService(ai_client)
-        return ChatCompletionService(falcon_service)
+        return ChatGenerationService(falcon_service)
 
     def create_audio_completion_service(
         self,

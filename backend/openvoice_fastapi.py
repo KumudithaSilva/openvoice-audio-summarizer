@@ -93,7 +93,7 @@ def user_request(data: ChatResponse):
         message_service = container.create_chat_messages()
         message = message_service.initialize(data.messages)
 
-        completion_service = container.create_chat_completion_service(
+        completion_service = container.create_chat_generation_service(
             ai_client=ai_client
         )
         response = completion_service.generate(messages=message)
