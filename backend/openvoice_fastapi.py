@@ -18,11 +18,18 @@ async def lifespan(app: FastAPI):
     Initializes the AI client at startup.
     """
     try:
-        logger.info("Starting FastAPI server: initializing AI client...")
-        connection_service = container.create_chat_connection_service()
-        app.state.ai_client = connection_service.connect()
-        logger.info("AI client initialized successfully.")
+        # logger.info("Starting FastAPI server: initializing FalconAI client...")
+        # falcon_connection_service = container.create_chat_connection_service()
+        # app.state.falcon_ai_client = falcon_connection_service.connect()
+        # logger.info("FalconAI client initialized successfully.")
+
+        logger.info("Starting WhisperAPI server: initializing WhisperAPI client...")
+        whisper_connection_service = container.create_voice_connection_service()
+        app.state.whisper_ai_client = whisper_connection_service.connect()
+        logger.info("WhisperAPI client initialized successfully.")
+
         yield
+
     except Exception:
         logger.exception("Error during FastAPI startup")
         raise
@@ -53,20 +60,22 @@ async def user_upload(file: UploadFile = File(...)):
         # bytes of audio file
         logger.debug(f"File received: {file.filename}, type: {file.content_type}")
 
-        audio_service = container.create_audio_completion_service()
-        audio_service.load_audio_file(file.file)
+        whisper_ai_client = app.state.whisper_ai_client
+        if whisper_ai_client is None:
+            logger.error("WhisperAI client not initialized")
+            raise RuntimeError("WhisperAI client not initialized")
+        logger.info("WhisperAIclient available for request")
 
-        audio_response = audio_service.preprocess_audio()
-        audio = audio_response.waveform
+        audio_service = container.create_transcription_completion_service(
+            ai_client=whisper_ai_client
+        )
+        response = audio_service.generate(audio_path=file.file)
+        logger.debug(f"Response: {response}")
 
-        logger.debug(f"Response: {audio}")
+        if response is None:
+            raise RuntimeError("WhisperAI returned None")
 
-        preview = audio[:, :100]
-
-        if audio is None:
-            raise RuntimeError("VoiceAI returned None")
-
-        return {"response": preview.tolist()}
+        return {"response": response}
 
     except Exception as e:
         logger.exception("Error in /chat/user_upload")
@@ -84,17 +93,17 @@ def user_request(data: ChatResponse):
     try:
         logger.debug(f"Incoming messages: {data.messages}")
 
-        ai_client = app.state.ai_client
-        if ai_client is None:
-            logger.error("AI client not initialized")
-            raise RuntimeError("AI client not initialized")
-        logger.info("AI client available for request")
+        falcon_ai_client = app.state.falcon_ai_client
+        if falcon_ai_client is None:
+            logger.error("FalconAI client not initialized")
+            raise RuntimeError("FalconAI client not initialized")
+        logger.info("FalconAI client available for request")
 
         message_service = container.create_chat_messages()
         message = message_service.initialize(data.messages)
 
         completion_service = container.create_chat_generation_service(
-            ai_client=ai_client
+            ai_client=falcon_ai_client
         )
         response = completion_service.generate(messages=message)
 
