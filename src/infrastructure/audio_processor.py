@@ -1,3 +1,5 @@
+from typing import IO, Union
+
 from dto.audio_data import AudioData
 from interfaces.audio.i_audio_processor import IAudioProcessor
 from logs.logger_singleton import Logger
@@ -19,12 +21,12 @@ class AudioProcessor(IAudioProcessor):
         self.logger = logger or Logger(self.__class__.__name__)
         self.audio_data: AudioData | None = None
 
-    def load_audio_file(self, path: str) -> AudioData:
+    def load_audio_file(self, path: Union[str, IO[bytes]]) -> AudioData:
         """
         Load audio file and return AudioData containing waveform and sample rate.
 
         Args:
-            path (str): Path to audio file.
+            path (str | IO[bytes]): Path to audio file or file-like object.
 
         Returns:
             AudioData: Loaded audio data.
@@ -80,6 +82,8 @@ class AudioProcessor(IAudioProcessor):
 
                 self.audio_data.waveform = resampler(self.audio_data.waveform)
                 self.audio_data.sample_rate = samplerate
+
+                self.audio_data.waveform = self.audio_data.waveform.squeeze(0)
 
                 self.logger.info(f"Resampled audio data")
 
