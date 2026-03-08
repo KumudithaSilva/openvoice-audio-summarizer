@@ -11,7 +11,6 @@ class ChatGenerationService(ITextGenereateService):
 
     Attributes:
         falcon_ai_service (IOpenAIOperations): Interface for AI operations.
-        tool_schema (IToolSchema): Interface for tool schema generation.
     """
 
     def __init__(self, falcon_ai_service: IFalconAIOperations):
