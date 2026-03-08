@@ -70,7 +70,6 @@ async def user_upload(file: UploadFile = File(...)):
             ai_client=whisper_ai_client
         )
         response = audio_service.generate(audio_path=file.file)
-        logger.debug(f"Response: {response}")
 
         if response is None:
             raise RuntimeError("WhisperAI returned None")
