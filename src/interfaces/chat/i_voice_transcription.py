@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import IO, Union
-from dto.audio_data import AudioData
 
 
 class IVoiceTranscriptionService(ABC):
