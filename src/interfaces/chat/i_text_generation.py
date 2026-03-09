@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
 
 
 class ITextGenereateService(ABC):
@@ -8,7 +7,7 @@ class ITextGenereateService(ABC):
     """
 
     @abstractmethod
-    def generate(self, messages: List[Dict]) -> str:
+    def generate(self, voice_text: str) -> str:
         """
         Genereate response for client request
 
