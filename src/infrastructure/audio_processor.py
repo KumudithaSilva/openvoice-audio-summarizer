@@ -5,20 +5,24 @@ from interfaces.audio.i_audio_processor import IAudioProcessor
 from logs.logger_singleton import Logger
 import torchaudio
 
+from logs.logger_streamlit import LoggerStreamlit
+
 
 class AudioProcessor(IAudioProcessor):
     """
     Provide preprocess audio waveform.
     """
 
-    def __init__(self, logger=None):
+    def __init__(self, logger=None, logger_streamlit=None):
         """
         Initialize the Audio processor instance.
 
         Args:
             logger (Logger, optional): Logger instance. If None, a default is used.
+            logger_streamlit (LoggerStreamlit, optional): Streamlit logger instance.
         """
         self.logger = logger or Logger(self.__class__.__name__)
+        self.logger_streamlit = logger_streamlit or LoggerStreamlit()
         self.audio_data: AudioData | None = None
 
     def load_audio_file(self, path: Union[str, IO[bytes]]) -> AudioData:
@@ -41,6 +45,7 @@ class AudioProcessor(IAudioProcessor):
             self.logger.info(
                 f"Audio file loaded: {path}, shape={waveform.shape}, sample_rate={sample_rate}"
             )
+            self.logger_streamlit.add("Audio file loaded")
             return self.audio_data
 
         except FileNotFoundError as fnf_error:
@@ -73,6 +78,7 @@ class AudioProcessor(IAudioProcessor):
                     dim=0, keepdim=True
                 )
                 self.logger.info(f"Converted audio to mono.")
+                self.logger_streamlit.add("Audio file Converted")
 
             # Resample the waveform
             if self.audio_data.sample_rate != samplerate:
@@ -86,6 +92,7 @@ class AudioProcessor(IAudioProcessor):
                 self.audio_data.waveform = self.audio_data.waveform.squeeze(0)
 
                 self.logger.info(f"Resampled audio data")
+                self.logger_streamlit.add("Audio file Resampled")
 
             return self.audio_data
 
