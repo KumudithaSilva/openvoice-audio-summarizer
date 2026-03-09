@@ -18,5 +18,4 @@ def get_falcon_client(request: Request):
     if client is None:
         logger.error("FalconAI client not initialized")
         raise RuntimeError("FalconAI client not initialized")
-    logger.info("FalconAI client available for request")
     return client
