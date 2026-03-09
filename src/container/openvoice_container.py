@@ -20,6 +20,8 @@ from interfaces.llm.i_ai_client import IAIClient
 from interfaces.llm.i_falcon_operations import IFalconAIOperations
 from interfaces.llm.i_voice_ai_client import IWhisperClient
 from interfaces.llm.i_whisper_operations import IWhisperOperations
+from interfaces.logging.i_ui_logging_interface import IUiLogger
+from logs.logger_streamlit import LoggerStreamlit
 
 
 class OpenVoiceContainer:
@@ -27,6 +29,10 @@ class OpenVoiceContainer:
     Factory to wire all dependencies and return orchestrator service instances.
     This container provides methods to create services for FalconAI and WhisperAI.
     """
+
+    def __init__(self):
+        # Shared Streamlit logger for all services
+        self._streamlit_logger: LoggerStreamlit = LoggerStreamlit()
 
     #### Falcon Services ####
 
@@ -52,7 +58,9 @@ class OpenVoiceContainer:
         Create and return a chat generation service using the
         provided Falcon AI client and prompt provider.
         """
-        falcon_service: IFalconAIOperations = FalconAIService(ai_client)
+        falcon_service: IFalconAIOperations = FalconAIService(
+            ai_client, logger_streamlit=self._streamlit_logger
+        )
 
         if prompt_provider is None:
             prompt_provider = PromptProvider()
@@ -82,8 +90,12 @@ class OpenVoiceContainer:
         Create and return an audio transcription service using the
         provided Whisper AI client and Audio preprocessor.
         """
-        whisper_service: IWhisperOperations = WhisperAIService(ai_client)
-        audio_processor: IAudioProcessor = AudioProcessor()
+        whisper_service: IWhisperOperations = WhisperAIService(
+            ai_client, logger_streamlit=self._streamlit_logger
+        )
+        audio_processor: IAudioProcessor = AudioProcessor(
+            logger_streamlit=self._streamlit_logger
+        )
 
         return VoiceTranscriptionService(whisper_service, audio_processor)
 
@@ -112,3 +124,12 @@ class OpenVoiceContainer:
             transcription_service=transcription_service,
             chat_service=chat_service,
         )
+
+    #### Falcon and Whisper Streamlit Log Services ####
+
+    def streamlit_logs(self) -> IUiLogger:
+        """
+        Create streamlit logging services for audio transcription service and Falcon AI
+        text genration.
+        """
+        return self._streamlit_logger
