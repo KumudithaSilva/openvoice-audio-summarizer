@@ -1,6 +1,6 @@
 from components.chat_generation import ChatGenerationService
 from components.chat_connection import ChatConnectionService
-from components.chat_messages import MessageCompletionService
+from components.voice_chat_generation import VoiceChatService
 from components.voice_connection import VoiceConnectionService
 from components.voice_transcription import VoiceTranscriptionService
 from infrastructure.audio_processor import AudioProcessor
@@ -8,10 +8,10 @@ from infrastructure.falcon_prompt import PromptProvider
 from infrastructure.falconai_service import FalconAIService
 from infrastructure.whisper_service import WhisperAIService
 from interfaces.audio.i_audio_processor import IAudioProcessor
-from interfaces.chat.i_chat_history import IMessageCompletionService
 from interfaces.chat.i_oneshot_prompt import IPrompt
 from interfaces.chat.i_text_generation import ITextGenereateService
 from interfaces.chat.i_falcon_connection import IFalconConnection
+from interfaces.chat.i_voice_chat import IVoiceChatService
 from interfaces.chat.i_voice_transcription import IVoiceTranscriptionService
 from interfaces.chat.i_whisper_connection import IWhisperConnection
 from interfaces.infra.i_config_provider import IConfigProvider
@@ -43,24 +43,21 @@ class OpenVoiceContainer:
 
         return ChatConnectionService(config_provider)
 
-    def create_chat_messages(self) -> IMessageCompletionService:
-        """
-        Create and return a Falcon chat completion service
-        with a default prompt provider.
-        """
-        prompt_provider: IPrompt = PromptProvider()
-        return MessageCompletionService(prompt_provider)
-
     def create_chat_generation_service(
         self,
         ai_client: IAIClient,
+        prompt_provider: IPrompt | None = None,
     ) -> ITextGenereateService:
         """
         Create and return a chat generation service using the
-        provided Falcon AI client.
+        provided Falcon AI client and prompt provider.
         """
         falcon_service: IFalconAIOperations = FalconAIService(ai_client)
-        return ChatGenerationService(falcon_service)
+
+        if prompt_provider is None:
+            prompt_provider = PromptProvider()
+
+        return ChatGenerationService(falcon_service, prompt_provider)
 
     #### Whisper Services ####
 
@@ -89,3 +86,29 @@ class OpenVoiceContainer:
         audio_processor: IAudioProcessor = AudioProcessor()
 
         return VoiceTranscriptionService(whisper_service, audio_processor)
+
+    #### Falcon and Whisper Services ####
+
+    def create_voice_chat_service(
+        self,
+        whisper_client: IWhisperClient,
+        falcon_client: IAIClient,
+        prompt_provider: IPrompt | None = None,
+    ) -> IVoiceChatService:
+        """
+        Create combination of audio transcription service and Falcon AI
+        client text genration service and return generated response.
+        """
+
+        transcription_service = self.create_transcription_completion_service(
+            ai_client=whisper_client
+        )
+        chat_service = self.create_chat_generation_service(
+            ai_client=falcon_client,
+            prompt_provider=prompt_provider,
+        )
+
+        return VoiceChatService(
+            transcription_service=transcription_service,
+            chat_service=chat_service,
+        )
