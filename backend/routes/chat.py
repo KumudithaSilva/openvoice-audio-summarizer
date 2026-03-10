@@ -56,7 +56,7 @@ async def user_upload(
         )
 
 
-@router.post("/chat/streamlit_logs", response_model=StreamlitLogsResponse)
+@router.get("/chat/streamlit_logs", response_model=StreamlitLogsResponse)
 async def streamlit_logs():
     """
     Handle streamlit ui logs.
