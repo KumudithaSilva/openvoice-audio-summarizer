@@ -97,7 +97,9 @@ class Falcon:
                 input_ids=inputs,
                 attention_mask=attention_mask,
                 pad_token_id=self.tokenizer.pad_token_id,
-                max_new_tokens=100,
+                max_new_tokens=350,
+                do_sample=True,
+                temperature=0.2,
             )
 
             generated_tokens = output[0][inputs.shape[-1] :]
