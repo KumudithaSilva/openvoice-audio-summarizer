@@ -36,14 +36,9 @@ To improve computational efficiency, the system runs on an NVIDIA GeForce RTX 20
 
 ## 📸 OpenVoice Audio Summarizer Output (UI Preview)
 
-#### OpenVoice Log Output
-
-<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets"/>
-
-
 #### OpenVoice Summary Output
 
-<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets"/>
+<img width="500" height="700" alt="image" src="https://github.com/user-attachments/assets/213e99bb-c601-47df-899c-c9b019734003"/>
 
 
 
