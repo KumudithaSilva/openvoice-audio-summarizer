@@ -36,10 +36,9 @@ To improve computational efficiency, the system runs on an NVIDIA GeForce RTX 20
 
 ## 📸 OpenVoice Audio Summarizer Output (UI Preview)
 
-#### OpenVoice Summary Output
+#### OpenVoice Log Output
 
 <img width="500" height="700" alt="image" src="https://github.com/user-attachments/assets/213e99bb-c601-47df-899c-c9b019734003"/>
-
 
 
 ## 🏗️ Architecture
@@ -225,6 +224,53 @@ AI Model & Audio Process
         │              ├─ Display final result to user
         │─────────►├─ Streaming logs continue
 
+```
+
+## 📌 Prerequisites
+
+- A system with **GPU and CUDA** support  
+- Minimum GPU memory: **6 GB**  
+- **Conda** installed (for environment management)  
+- **Python 3.10** recommended 
+
+---
+
+## 💻 Installation
+
+1. Create a Conda environment:
+
+```bash
+conda create -n llm-openvoice python=3.10
+```
+
+2. Activate the environment:
+```bash
+conda activate llm-openvoice
+```
+
+3. Install PyTorch, TorchAudio, and CUDA support:
+```bash
+conda install pytorch torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+```
+
+4. Install dependencies
+```bash
+pip install -r requirement.txt
+```
+
+5. Download required models:
+- `Falcon3-1B-Instruct` → save to a local folder, e.g., G:/LLMs/Falcon3-1B-Instruct
+  - Download `tiiuae/Falcon3-1B-Instruct`
+- `Whisper-Medium` → save to a local folder, e.g., G:/LLMs/whisper_medium_en
+  - Download `openai/whisper-medium.en`
+- After downloading the models, update config.yaml with the paths where you saved the models
+
+```yaml
+models:
+  Falcon3-1B-Instruct:
+    location: "YOUR_LOCAL_PATH/Falcon3-1B-Instruct"
+  Whisper-Medium:
+    location: "YOUR_LOCAL_PATH/whisper_medium_en"
 ```
 
 ## 🤝 Contributing
