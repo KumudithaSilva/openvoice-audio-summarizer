@@ -1,0 +1,5 @@
+models:
+  Falcon3-1B-Instruct:
+    location: "G:/LLMs/ai-meeting-minutes-generator/Falcon3-1B-Instruct"
+  Whisper-Medium:
+    location: "G:/LLMs/ai-meeting-minutes-generator/whisper_medium_en"
